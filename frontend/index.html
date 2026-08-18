@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ResearchAI — Autonomous Research Agent</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+
+<body>
+
+    <div class="background-glow glow-one"></div>
+    <div class="background-glow glow-two"></div>
+
+    <div class="app">
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+
+            <div class="brand">
+
+                <div class="brand-icon">
+                    ✦
+                </div>
+
+                <div>
+                    <h1>ResearchAI</h1>
+                    <span>Autonomous Agent</span>
+                </div>
+
+            </div>
+
+
+            <button class="new-research" id="newResearch">
+
+                <span>＋</span>
+
+                New Research
+
+            </button>
+
+
+            <nav>
+
+                <a
+                    class="nav-item active"
+                    id="dashboardNav"
+                >
+                    <span>⌂</span>
+                    Dashboard
+                </a>
+
+
+                <a
+                    class="nav-item"
+                    id="historyNav"
+                >
+                    <span>◷</span>
+                    History
+                </a>
+
+
+                <a
+                    class="nav-item"
+                    id="apiNav"
+                >
+                    <span>⌘</span>
+                    API Status
+                </a>
+
+            </nav>
+
+
+            <div class="sidebar-bottom">
+
+                <div class="api-status">
+
+                    <span
+                        class="status-dot"
+                        id="statusDot"
+                    ></span>
+
+                    <div>
+
+                        <strong id="apiStatusText">
+                            Checking API...
+                        </strong>
+
+                        <small>
+                            FastAPI Service
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <button
+                    class="theme-toggle"
+                    id="themeToggle"
+                >
+
+                    <span id="themeIcon">
+                        ☾
+                    </span>
+
+                    <span id="themeText">
+                        Dark Mode
+                    </span>
+
+                </button>
+
+            </div>
+
+        </aside>
+
+
+        <!-- Main -->
+        <main class="main">
+
+            <!-- Top bar -->
+            <header class="topbar">
+
+                <div>
+
+                    <span class="eyebrow">
+                        AI RESEARCH WORKSPACE
+                    </span>
+
+                    <h2>
+                        Autonomous Research
+                    </h2>
+
+                </div>
+
+
+                <div class="top-actions">
+
+                    <div class="connection">
+
+                        <span class="pulse"></span>
+
+                        <span id="connectionText">
+                            API Connected
+                        </span>
+
+                    </div>
+
+
+                    <button
+                        class="icon-button"
+                        id="topThemeToggle"
+                    >
+                        ☾
+                    </button>
+
+                </div>
+
+            </header>
+
+
+            <!-- Hero -->
+            <section class="hero">
+
+                <div class="hero-content">
+
+                    <div class="ai-badge">
+
+                        <span>✦</span>
+
+                        Powered by khalid yahia
+
+                    </div>
+
+
+                    <h3>
+
+                        Turn a question into
+
+                        <span>
+                            deep research.
+                        </span>
+
+                    </h3>
+
+
+                    <p>
+
+                        Give your research agent a topic and let it
+                        investigate, analyze, and generate a structured report.
+
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- Research Card -->
+            <section
+                class="research-card"
+                id="researchCard"
+            >
+
+                <div class="card-header">
+
+                    <div>
+
+                        <h3>
+                            Start a Research Task
+                        </h3>
+
+                        <p>
+                            What would you like the agent to investigate?
+                        </p>
+
+                    </div>
+
+
+                    <div class="agent-status">
+
+                        <span class="status-dot"></span>
+
+                        Agent Ready
+
+                    </div>
+
+                </div>
+
+
+                <div class="input-wrapper">
+
+                    <textarea
+                        id="topicInput"
+                        placeholder="Example: Explain the difference between training, validation, and testing data in machine learning..."
+                        rows="5"
+                    ></textarea>
+
+
+                    <div class="input-footer">
+
+                        <span>
+
+                            <kbd>
+                                Ctrl
+                            </kbd>
+
+                            <kbd>
+                                Enter
+                            </kbd>
+
+                            to research
+
+                        </span>
+
+
+                        <span id="charCount">
+                            0 characters
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="research-options">
+
+                    <div class="option">
+
+                        <label>
+                            Max Retries
+                        </label>
+
+
+                        <select id="maxRetries">
+
+                            <option value="0">
+                                0
+                            </option>
+
+                            <option value="1">
+                                1
+                            </option>
+
+                            <option
+                                value="2"
+                                selected
+                            >
+                                2
+                            </option>
+
+                            <option value="3">
+                                3
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <button
+                        class="research-button"
+                        id="researchButton"
+                    >
+
+                        <span class="button-icon">
+                            ✦
+                        </span>
+
+
+                        <span id="buttonText">
+                            Start Research
+                        </span>
+
+
+                        <span class="arrow">
+                            →
+                        </span>
+
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- Loading -->
+            <section
+                class="loading-card hidden"
+                id="loadingCard"
+            >
+
+                <div class="loader"></div>
+
+
+                <div>
+
+                    <strong>
+                        Agent is researching...
+                    </strong>
+
+                    <p id="loadingText">
+                        Gathering and analyzing information
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- Statistics -->
+            <section
+                class="stats-grid"
+                id="statsSection"
+            >
+
+                <div class="stat-card">
+
+                    <div class="stat-icon purple">
+                        ✦
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Quality Score
+                        </span>
+
+                        <strong id="qualityScore">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon blue">
+                        ↻
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Retry Count
+                        </span>
+
+                        <strong id="retryCount">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon green">
+                        ◈
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Tokens Used
+                        </span>
+
+                        <strong id="tokensUsed">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="stat-card">
+
+                    <div class="stat-icon orange">
+                        ◷
+                    </div>
+
+                    <div>
+
+                        <span>
+                            Duration
+                        </span>
+
+                        <strong id="duration">
+                            —
+                        </strong>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- Report -->
+            <section
+                class="report-section hidden"
+                id="reportSection"
+            >
+
+                <div class="report-header">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            GENERATED REPORT
+                        </span>
+
+                        <h3 id="reportTitle">
+                            Research Report
+                        </h3>
+
+                    </div>
+
+
+                    <div class="report-actions">
+
+                        <button id="copyButton">
+                            Copy
+                        </button>
+
+                        <button id="downloadButton">
+                            Download
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <article
+                    class="report-content"
+                    id="reportContent"
+                ></article>
+
+            </section>
+
+
+            <!-- History -->
+            <section
+                class="report-section hidden"
+                id="historySection"
+            >
+
+                <div class="report-header">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            RESEARCH HISTORY
+                        </span>
+
+                        <h3>
+                            Previous Research
+                        </h3>
+
+                    </div>
+
+
+                    <div class="report-actions">
+
+                        <button id="clearHistoryButton">
+                            Clear History
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div
+                    class="history-container"
+                    id="historyContainer"
+                ></div>
+
+            </section>
+
+
+            <!-- API Status -->
+            <section
+                class="report-section hidden"
+                id="apiSection"
+            >
+
+                <div class="report-header">
+
+                    <div>
+
+                        <span class="eyebrow">
+                            SYSTEM STATUS
+                        </span>
+
+                        <h3>
+                            FastAPI Connection
+                        </h3>
+
+                    </div>
+
+                </div>
+
+
+                <div class="report-content">
+
+                    <div class="api-status-large">
+
+                        <span
+                            class="status-dot"
+                            id="largeStatusDot"
+                        ></span>
+
+                        <div>
+
+                            <h3 id="largeApiStatus">
+                                Checking...
+                            </h3>
+
+                            <p>
+                                http://127.0.0.1:8000
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- Empty State -->
+            <section
+                class="empty-state"
+                id="emptyState"
+            >
+
+                <div class="empty-icon">
+                    ✦
+                </div>
+
+
+                <h3>
+                    Your research report will appear here
+                </h3>
+
+
+                <p>
+                    Enter a topic above and let your autonomous agent
+                    do the work.
+                </p>
+
+            </section>
+
+
+            <!-- Error -->
+            <div
+                class="error-toast hidden"
+                id="errorToast"
+            >
+
+                <div class="error-icon">
+                    !
+                </div>
+
+
+                <div>
+
+                    <strong>
+                        Research failed
+                    </strong>
+
+                    <p id="errorMessage"></p>
+
+                </div>
+
+
+                <button id="closeError">
+                    ×
+                </button>
+
+            </div>
+
+        </main>
+
+    </div>
+
+
+    <script src="app.js"></script>
+
+</body>
+</html>

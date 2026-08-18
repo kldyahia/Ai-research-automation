@@ -11,6 +11,7 @@ from fastapi import (
     HTTPException,
     Request,
 )
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
 from agent.graph import app as agent_app
@@ -49,6 +50,19 @@ app = FastAPI(
         "multi-agent research system."
     ),
     version=APP_VERSION,
+)
+
+
+# =========================================================
+# CORS
+# =========================================================
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 
@@ -203,7 +217,6 @@ async def research(
 
     endpoint = "/research"
 
-
     logger.info(
         "Research request started",
         extra={
@@ -211,7 +224,6 @@ async def research(
             "endpoint": endpoint,
         },
     )
-
 
     try:
 
@@ -228,7 +240,6 @@ async def research(
             - start_time
         )
 
-
         logger.info(
             "Research request completed",
             extra={
@@ -241,7 +252,6 @@ async def research(
                 "outcome": "success",
             },
         )
-
 
         return ResearchResponse(
             topic=request.topic,
@@ -266,14 +276,12 @@ async def research(
             ),
         )
 
-
     except Exception as exc:
 
         duration = (
             time.perf_counter()
             - start_time
         )
-
 
         logger.exception(
             "Research request failed",
@@ -287,7 +295,6 @@ async def research(
                 "outcome": "error",
             },
         )
-
 
         raise HTTPException(
             status_code=500,
@@ -323,7 +330,6 @@ async def research_stream(
 
     endpoint = "/research/stream"
 
-
     async def event_generator():
 
         state = create_initial_state(
@@ -339,7 +345,6 @@ async def research_stream(
                     "endpoint": endpoint,
                 },
             )
-
 
             async for event in agent_app.astream(
                 state,
@@ -364,12 +369,10 @@ async def research_stream(
                     + "\n"
                 )
 
-
             duration = (
                 time.perf_counter()
                 - start_time
             )
-
 
             logger.info(
                 "Streaming research completed",
@@ -384,11 +387,9 @@ async def research_stream(
                 },
             )
 
-
             yield (
                 '{"event":"completed"}\n'
             )
-
 
         except Exception as exc:
 
@@ -396,7 +397,6 @@ async def research_stream(
                 time.perf_counter()
                 - start_time
             )
-
 
             logger.exception(
                 "Streaming research failed",
@@ -411,7 +411,6 @@ async def research_stream(
                 },
             )
 
-
             import json
 
             yield (
@@ -425,7 +424,6 @@ async def research_stream(
                 )
                 + "\n"
             )
-
 
     return StreamingResponse(
         event_generator(),
@@ -450,12 +448,10 @@ async def background_research(
 
     start_time = time.perf_counter()
 
-
     jobs[job_id] = {
         "status": "running",
         "topic": request.topic,
     }
-
 
     try:
 
@@ -471,7 +467,6 @@ async def background_research(
             time.perf_counter()
             - start_time
         )
-
 
         jobs[job_id] = {
             "status": "completed",
@@ -500,7 +495,6 @@ async def background_research(
             ),
         }
 
-
         logger.info(
             "Background research completed",
             extra={
@@ -514,14 +508,12 @@ async def background_research(
             },
         )
 
-
     except Exception as exc:
 
         duration = (
             time.perf_counter()
             - start_time
         )
-
 
         jobs[job_id] = {
             "status": "failed",
@@ -530,7 +522,6 @@ async def background_research(
 
             "error": str(exc),
         }
-
 
         logger.exception(
             "Background research failed",
@@ -571,20 +562,17 @@ async def research_async(
         uuid.uuid4()
     )
 
-
     jobs[job_id] = {
         "status": "queued",
 
         "topic": request.topic,
     }
 
-
     background_tasks.add_task(
         background_research,
         job_id,
         request,
     )
-
 
     logger.info(
         "Background research accepted",
@@ -594,7 +582,6 @@ async def research_async(
             "outcome": "accepted",
         },
     )
-
 
     return {
         "job_id": job_id,
@@ -613,10 +600,10 @@ async def research_async(
 # =========================================================
 # Job Status Endpoint
 # =========================================================
-#
+
 # This is an extra endpoint.
 # It is useful for checking background jobs.
-#
+
 # =========================================================
 
 @app.get(
@@ -634,14 +621,12 @@ async def get_job_status(
         job_id
     )
 
-
     if job is None:
 
         raise HTTPException(
             status_code=404,
             detail="Job not found.",
         )
-
 
     return {
         "job_id": job_id,
